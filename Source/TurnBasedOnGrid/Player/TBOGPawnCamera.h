@@ -47,29 +47,29 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> RotationAction;
 
-protected:
-	UPROPERTY(EditAnywhere, Category = "Input Scaler")
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Scaler")
 	float MinZoomLength = 100.f;
 
-	UPROPERTY(EditAnywhere, Category = "Input Scaler")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Scaler")
 	float MaxZoomLength = 1200.f;
 
-	UPROPERTY(EditAnywhere, Category = "Input Scaler")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Scaler")
 	float ZoomScaler = 40.f;
 
-	UPROPERTY(EditAnywhere, Category = "Input Scaler")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Scaler")
 	float MoveScaler = 20.f;
 
-	UPROPERTY(EditAnywhere, Category = "Input Scaler")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Scaler")
 	float RotationDegree = 45.f;
 
-	UPROPERTY(EditAnywhere, Category = "Interp Speed")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interp Speed")
 	float ZoomInterpSpeed = 2.f;
 
-	UPROPERTY(EditAnywhere, Category = "Interp Speed")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interp Speed")
 	float LocationInterpSpeed = 5.f;
 
-	UPROPERTY(EditAnywhere, Category = "Interp Speed")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interp Speed")
 	float RotationInterpSpeed = 5.f;
 
 protected:
