@@ -64,7 +64,7 @@ void AGridBase::SpawnGrid(FVector InCenterLocation, FVector InTileSize, FVector2
 		{
 			FTransform TileTransform;
 			TileTransform.SetScale3D(TileSize / Data->MeshSize);
-			TileTransform.SetLocation(GridLocationLeftCornerLocation + TileSize * FVector(X, Y, 0.f));
+			TileTransform.SetLocation(GetTileLocationFromXY(X, Y) + FVector(0.f, 0.f, 2.f));
 			InstancesMeshComp->AddInstance(TileTransform);
 		}
 	}

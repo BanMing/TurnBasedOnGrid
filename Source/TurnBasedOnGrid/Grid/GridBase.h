@@ -22,14 +22,20 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UFUNCTION(BlueprintPure)
-	FGridShapeData* GetShapeData() const;
-
 	UFUNCTION(BlueprintCallable)
 	void SpawnGrid(FVector InCenterLocation, FVector InTileSize, FVector2D InTileCount, EGridShape InShape);
 
 	UFUNCTION(BlueprintCallable)
 	void DestroyGrid();
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE FVector GetTileLocationFromXY(int32 X,int32 Y) const
+	{
+		return GridLocationLeftCornerLocation + TileSize * FVector(X, Y, 0.f);
+	}
+
+public:
+	FGridShapeData* GetShapeData() const;
 
 public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
