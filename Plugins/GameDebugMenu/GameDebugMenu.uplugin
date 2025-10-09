@@ -1,0 +1,35 @@
+{
+	"FileVersion": 3,
+	"Version": 2,
+	"VersionName": "1.33",
+	"FriendlyName": "GameDebugMenu",
+	"Description": "DebugMenu for UnrealEngine5",
+	"Category": "Debug",
+	"CreatedBy": "akihiko moroi",
+	"CreatedByURL": "https://github.com/000-aki-000/GameDebugMenu",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "GameDebugMenu",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "GameDebugMenuEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PreLoadingScreen"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "EnhancedInput",
+			"Enabled": true
+		}
+	],
+	"IsExperimentalVersion": false
+}
