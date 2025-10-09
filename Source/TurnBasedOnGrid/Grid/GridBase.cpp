@@ -70,6 +70,11 @@ void AGridBase::SpawnGrid(FVector InCenterLocation, FVector InTileSize, FVector2
 	}
 }
 
+void AGridBase::SpawnGridByDefault()
+{
+	SpawnGrid(CenterLocation, TileSize, TileCount, Shape);
+}
+
 void AGridBase::DestroyGrid()
 {
 	InstancesMeshComp->ClearInstances();

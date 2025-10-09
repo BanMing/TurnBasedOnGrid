@@ -24,12 +24,15 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnGrid(FVector InCenterLocation, FVector InTileSize, FVector2D InTileCount, EGridShape InShape);
+	
+	UFUNCTION(BlueprintCallable)
+	void SpawnGridByDefault();
 
 	UFUNCTION(BlueprintCallable)
 	void DestroyGrid();
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE FVector GetTileLocationFromXY(int32 X,int32 Y) const
+	FORCEINLINE FVector GetTileLocationFromXY(int32 X, int32 Y) const
 	{
 		return GridLocationLeftCornerLocation + TileSize * FVector(X, Y, 0.f);
 	}
@@ -51,10 +54,10 @@ public:
 	EGridShape Shape;
 
 protected:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	TObjectPtr<UInstancedStaticMeshComponent> InstancesMeshComp;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	TObjectPtr<UDataTable> GridShapeDataTable;
 
 protected:
