@@ -75,6 +75,24 @@ void AGridBase::SpawnGridByDefault()
 	SpawnGrid(CenterLocation, TileSize, TileCount, Shape);
 }
 
+void AGridBase::DrawDebugInfo()
+{
+	if (bDrawCenter)
+	{
+		DrawDebugSphere(GetWorld(), CenterLocation - FVector(TileSize.X/2, TileSize.Y/2, 0.f), 100.f, 3, FColor::Red, false, 0.1f, 0, 10.f);
+	}
+
+	if (bDrawBottomLeft)
+	{
+		DrawDebugSphere(GetWorld(), GridLocationLeftCornerLocation - FVector(TileSize.X/2, TileSize.Y/2, 0.f), 100.f, 3, FColor::Green, false, 0.1f, 0, 10.f);
+	}
+
+	if (bDrawBounds)
+	{
+		DrawDebugBox(GetWorld(), CenterLocation - FVector(TileSize.X/2, TileSize.Y/2, 0.f), CenterLocation - GridLocationLeftCornerLocation, FColor::Yellow, false, 0.1f, 0, 10.f);
+	}
+}
+
 void AGridBase::DestroyGrid()
 {
 	InstancesMeshComp->ClearInstances();

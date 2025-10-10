@@ -29,6 +29,9 @@ public:
 	void SpawnGridByDefault();
 
 	UFUNCTION(BlueprintCallable)
+	void DrawDebugInfo();
+
+	UFUNCTION(BlueprintCallable)
 	void DestroyGrid();
 
 	UFUNCTION(BlueprintCallable)
@@ -52,6 +55,17 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	EGridShape Shape;
+
+public:
+	// Debug
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	bool bDrawBounds = false;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	bool bDrawCenter = false;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	bool bDrawBottomLeft = false;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
