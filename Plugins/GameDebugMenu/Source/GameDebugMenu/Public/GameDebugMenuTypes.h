@@ -73,6 +73,7 @@ enum class EGDMPropertyType : uint8
 	GDM_String,
 	GDM_Vector,
 	GDM_Vector2D,
+	GDM_IntPoint,
 	GDM_Rotator,
 };
 

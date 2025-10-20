@@ -1,13 +1,14 @@
 /**
-* Copyright (c) 2020 akihiko moroi
-*
-* This software is released under the MIT License.
-* (See accompanying file LICENSE.txt or copy at http://opensource.org/licenses/MIT)
-*/
+ * Copyright (c) 2020 akihiko moroi
+ *
+ * This software is released under the MIT License.
+ * (See accompanying file LICENSE.txt or copy at http://opensource.org/licenses/MIT)
+ */
 
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "GDMListenerComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGDMGameDebugMenuListenerDelegate);
@@ -20,6 +21,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FGDMOnChangePropertyByteDelegate, 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FGDMOnChangePropertyStringDelegate, const FName&, PropertyName, UObject*, PropertyOwnerObject, FString, New, FString, Old, const FString&, PropertySaveKey);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FGDMOnChangePropertyVectorDelegate, const FName&, PropertyName, UObject*, PropertyOwnerObject, FVector, New, FVector, Old, const FString&, PropertySaveKey);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FGDMOnChangePropertyVector2DDelegate, const FName&, PropertyName, UObject*, PropertyOwnerObject, FVector2D, New, FVector2D, Old, const FString&, PropertySaveKey);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FGDMOnChangePropertyIntPointDelegate, const FName&, PropertyName, UObject*, PropertyOwnerObject, FVector2D, New, FVector2D, Old, const FString&, PropertySaveKey);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FGDMOnChangePropertyRotatorDelegate, const FName&, PropertyName, UObject*, PropertyOwnerObject, FRotator, New, FRotator, Old, const FString&, PropertySaveKey);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGDMOnInputSystemDelegate, UObject*, TargetInputObject);
@@ -27,8 +29,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGDMOnInputSystemChangeInputObjectD
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGDMOnChangeDebugMenuLanguageDelegate, const FName&, NewLanguageKey, const FName&, OldLanguageKey);
 
 /**
-* DebugMenuでのイベントを取得できるコンポーネント
-*/
+ * DebugMenuでのイベントを取得できるコンポーネント
+ */
 UCLASS(Blueprintable, ClassGroup = (GameDebugMenu), hidecategories = Object, meta = (BlueprintSpawnableComponent))
 class GAMEDEBUGMENU_API UGDMListenerComponent : public UActorComponent
 {
@@ -79,6 +81,10 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GDM|Dispatcher")
 	FGDMOnChangePropertyVector2DDelegate OnChangePropertyVector2DDispatcher;
 
+	/** DebugMenuに登録されたプロパティ（Vector2D）が変更されたとき呼ばれるイベント */
+	UPROPERTY(BlueprintAssignable, Category = "GDM|Dispatcher")
+	FGDMOnChangePropertyIntPointDelegate OnChangePropertyIntPointDispatcher;
+
 	/** DebugMenuに登録されたプロパティ（Rotator）が変更されたとき呼ばれるイベント */
 	UPROPERTY(BlueprintAssignable, Category = "GDM|Dispatcher")
 	FGDMOnChangePropertyRotatorDelegate OnChangePropertyRotatorDispatcher;
@@ -94,11 +100,11 @@ public:
 	/** DebugMenuでスクショ処理の終了時に呼ばれるイベント */
 	UPROPERTY(BlueprintAssignable, Category = "GDM|Dispatcher")
 	FGDMGameDebugMenuListenerDelegate OnScreenshotRequestProcessedDispatcher;
-	
+
 	/** DebugMenuでロードが完了した時に呼ばれるイベント */
 	UPROPERTY(BlueprintAssignable, Category = "GDM|Dispatcher")
 	FGDMGameDebugMenuListenerDelegate OnLoadedDebugMenuDispatcher;
-	
+
 	/** DebugMenuでセーブが完了した時に呼ばれるイベント */
 	UPROPERTY(BlueprintAssignable, Category = "GDM|Dispatcher")
 	FGDMGameDebugMenuListenerDelegate OnSavedDebugMenuDispatcher;
@@ -106,8 +112,8 @@ public:
 	/** DebugMenuのセーブが削除した時に呼ばれるイベント */
 	UPROPERTY(BlueprintAssignable, Category = "GDM|Dispatcher")
 	FGDMGameDebugMenuListenerDelegate OnDeletedDebugMenuDispatcher;
-	
-public:	
+
+public:
 	UGDMListenerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void InitializeComponent() override;
 	virtual void UninitializeComponent() override;

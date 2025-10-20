@@ -23,7 +23,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SpawnGrid(FVector InCenterLocation, FVector InTileSize, FVector2D InTileCount, EGridShape InShape);
+	void SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoint InTileCount, EGridShape InShape, bool bUseEnvironment);
 	
 	UFUNCTION(BlueprintCallable)
 	void SpawnGridByDefault();
@@ -33,6 +33,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DestroyGrid();
+
+	UFUNCTION(BlueprintCallable)
+	bool TraceForGround(FVector& OutLocation);
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE FVector GetTileLocationFromXY(int32 X, int32 Y) const
@@ -51,10 +54,13 @@ public:
 	FVector TileSize;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	FVector2D TileCount;
+	FIntPoint TileCount;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	EGridShape Shape;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	EDrawDebugTrace::Type DrawDebugTrace;
 
 public:
 	// Debug

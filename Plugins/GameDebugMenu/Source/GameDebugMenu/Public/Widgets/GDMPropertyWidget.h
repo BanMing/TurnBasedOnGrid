@@ -1,19 +1,20 @@
 /**
-* Copyright (c) 2020 akihiko moroi
-*
-* This software is released under the MIT License.
-* (See accompanying file LICENSE.txt or copy at http://opensource.org/licenses/MIT)
-*/
+ * Copyright (c) 2020 akihiko moroi
+ *
+ * This software is released under the MIT License.
+ * (See accompanying file LICENSE.txt or copy at http://opensource.org/licenses/MIT)
+ */
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameDebugMenuWidget.h"
 #include "GameDebugMenuTypes.h"
+#include "GameDebugMenuWidget.h"
+
 #include "GDMPropertyWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class UGDMPropertyWidget : public UGameDebugMenuWidget
@@ -21,7 +22,6 @@ class UGDMPropertyWidget : public UGameDebugMenuWidget
 	GENERATED_BODY()
 
 public:
-
 	/** プロパティ所持オブジェクト */
 	UPROPERTY(BlueprintReadWrite, Category = "GDM|Properties")
 	TObjectPtr<UObject> TargetObject;
@@ -44,7 +44,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "GDM|Properties")
 	FString PropertySaveKey;
-	
+
 protected:
 	bool bStartChangeAmount;
 	bool bChangedMaxChangeAmount;
@@ -109,9 +109,14 @@ public:
 	void SetPropertyValue_Vector2D(FVector2D NewValue, bool& bHasProperty);
 
 	UFUNCTION(BlueprintCallable, Category = "GDM|Properties")
+	FIntPoint GetPropertyValue_IntVector2D(bool& bHasProperty);
+
+	UFUNCTION(BlueprintCallable, Category = "GDM|Properties")
+	void SetPropertyValue_IntVector2D(FIntPoint NewValue, bool& bHasProperty);
+
+	UFUNCTION(BlueprintCallable, Category = "GDM|Properties")
 	FRotator GetPropertyValue_Rotator(bool& bHasProperty);
 
 	UFUNCTION(BlueprintCallable, Category = "GDM|Properties")
 	void SetPropertyValue_Rotator(FRotator NewValue, bool& bHasProperty);
-
 };

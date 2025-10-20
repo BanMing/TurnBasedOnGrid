@@ -44,6 +44,7 @@ void UGDMListenerComponent::AllUnbindDispatchers()
 	OnChangePropertyStringDispatcher.Clear();
 	OnChangePropertyVectorDispatcher.Clear();
 	OnChangePropertyVector2DDispatcher.Clear();
+	OnChangePropertyIntPointDispatcher.Clear();
 	OnChangePropertyRotatorDispatcher.Clear();
 	OnChangeDebugMenuLanguageDispatcher.Clear();
 	OnStartScreenshotRequestDispatcher.Clear();

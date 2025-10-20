@@ -35,7 +35,8 @@ void UGDMPropertyJsonSystemComponent::BeginPlay()
     ListenerComp->OnChangePropertyByteDispatcher.AddUniqueDynamic(this, &UGDMPropertyJsonSystemComponent::OnChangePropertyByte);
     ListenerComp->OnChangePropertyStringDispatcher.AddUniqueDynamic(this, &UGDMPropertyJsonSystemComponent::OnChangePropertyString);
     ListenerComp->OnChangePropertyVectorDispatcher.AddUniqueDynamic(this, &UGDMPropertyJsonSystemComponent::OnChangePropertyVector);
-    ListenerComp->OnChangePropertyVector2DDispatcher.AddUniqueDynamic(this, &UGDMPropertyJsonSystemComponent::OnChangePropertyVector2D);
+	ListenerComp->OnChangePropertyVector2DDispatcher.AddUniqueDynamic(this, &UGDMPropertyJsonSystemComponent::OnChangePropertyVector2D);
+	ListenerComp->OnChangePropertyIntPointDispatcher.AddUniqueDynamic(this, &UGDMPropertyJsonSystemComponent::OnChangePropertyVector2D);
     ListenerComp->OnChangePropertyRotatorDispatcher.AddUniqueDynamic(this, &UGDMPropertyJsonSystemComponent::OnChangePropertyRotator);
 }
 
@@ -635,6 +636,14 @@ void UGDMPropertyJsonSystemComponent::OnChangePropertyVector2D(const FName& Prop
     {
         AddPropertyToJson(PropertySaveKey, PropertyOwnerObject, PropertyName.ToString());
     }
+}
+
+void UGDMPropertyJsonSystemComponent::OnChangePropertyIntPoint(const FName& PropertyName, UObject* PropertyOwnerObject, FVector2D New, FVector2D Old, const FString& PropertySaveKey)
+{
+	if (!PropertySaveKey.IsEmpty())
+	{
+		AddPropertyToJson(PropertySaveKey, PropertyOwnerObject, PropertyName.ToString());
+	}
 }
 
 void UGDMPropertyJsonSystemComponent::OnChangePropertyRotator(const FName& PropertyName, UObject* PropertyOwnerObject, FRotator New, FRotator Old, const FString& PropertySaveKey)
