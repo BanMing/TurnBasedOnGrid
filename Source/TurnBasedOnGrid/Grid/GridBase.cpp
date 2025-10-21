@@ -3,7 +3,7 @@
 #include "Grid/GridBase.h"
 
 #include "Components/InstancedStaticMeshComponent.h"
-#include "Kismet/KismetSystemLibrary.h"
+#include "Grid/GridModifier.h"
 #include "TurnBasedOnGrid.h"
 
 AGridBase::AGridBase()
@@ -36,12 +36,13 @@ FGridShapeData* AGridBase::GetShapeData() const
 	return Data;
 }
 
-void AGridBase::SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoint InTileCount, EGridShape InShape, bool bUseEnvironment)
+void AGridBase::SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoint InTileCount, EGridShape InShape, bool bInUseEnvironment)
 {
 	CenterLocation = InCenterLocation;
 	TileSize = InTileSize;
 	TileCount = InTileCount;
 	Shape = InShape;
+	bUseEnvironment = bInUseEnvironment;
 
 	// TODO: load async
 	FGridShapeData* Data = GetShapeData();
@@ -66,9 +67,9 @@ void AGridBase::SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoin
 			FTransform TileTransform;
 			TileTransform.SetScale3D(TileSize / Data->MeshSize);
 			FVector Location = GetTileLocationFromXY(X, Y) + FVector(0.f, 0.f, 2.f);
-			if (bUseEnvironment)
+			if (bInUseEnvironment)
 			{
-				if (TraceForGround(Location))
+				if (IsTileTypeWalkable(TraceForGround(Location)))
 				{
 					TileTransform.SetLocation(Location);
 					InstancesMeshComp->AddInstance(TileTransform);
@@ -81,11 +82,12 @@ void AGridBase::SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoin
 			}
 		}
 	}
+	SetActorLocation(FVector(0.f, 0.f, OffsetFromGround));
 }
 
 void AGridBase::SpawnGridByDefault()
 {
-	SpawnGrid(CenterLocation, TileSize, TileCount, Shape, true);
+	SpawnGrid(CenterLocation, TileSize, TileCount, Shape, bUseEnvironment);
 }
 
 void AGridBase::DrawDebugInfo()
@@ -111,7 +113,7 @@ void AGridBase::DestroyGrid()
 	InstancesMeshComp->ClearInstances();
 }
 
-bool AGridBase::TraceForGround(FVector& OutLocation)
+ETileType AGridBase::TraceForGround(FVector& OutLocation)
 {
 	const FVector Start = OutLocation + FVector(0.f, 0.f, 1000.f);
 	const FVector End = OutLocation - FVector(0.f, 0.f, 1000.f);
@@ -119,12 +121,33 @@ bool AGridBase::TraceForGround(FVector& OutLocation)
 	TArray<AActor*> ActorsToIgnore;
 	TArray<FHitResult> OutHits;
 	const bool bHit = UKismetSystemLibrary::SphereTraceMulti(this, Start, End, Radius, UEngineTypes::ConvertToTraceType(ECC_Ground), false, ActorsToIgnore, DrawDebugTrace, OutHits, true);
-	if (OutHits.Num() > 0)
+	ETileType Res = ETileType::Normal;
+	for (const FHitResult& HitResult : OutHits)
 	{
-		OutLocation.Z = OutHits[0].Location.Z - Radius;
-		// FMath::GridSnap(OutHits[0].Location.Z - Radius, TileSize.Z);
+		if (AGridModifier* GridModifier = Cast<AGridModifier>(HitResult.GetActor()))
+		{
+			return GridModifier->TileType;
+		}
+		else
+		{
+			OutLocation.Z = OutHits[0].Location.Z - Radius;
+		}
+	}
+	return Res;
+}
 
-		return true;
+bool AGridBase::IsTileTypeWalkable(ETileType TileType)
+{
+	switch (TileType)
+	{
+		case ETileType::None:
+			return false;
+		case ETileType::Normal:
+			return true;
+		case ETileType::Obstacle:
+			return false;
+		default:
+			return false;
 	}
 	return false;
 }

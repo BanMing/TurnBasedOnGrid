@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Grid/GridShapes/GridShapeData.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Grid/TileType.h"
 
 #include "GridBase.generated.h"
 
@@ -23,8 +25,8 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoint InTileCount, EGridShape InShape, bool bUseEnvironment);
-	
+	void SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoint InTileCount, EGridShape InShape, bool bInUseEnvironment);
+
 	UFUNCTION(BlueprintCallable)
 	void SpawnGridByDefault();
 
@@ -35,7 +37,10 @@ public:
 	void DestroyGrid();
 
 	UFUNCTION(BlueprintCallable)
-	bool TraceForGround(FVector& OutLocation);
+	ETileType TraceForGround(FVector& OutLocation);
+
+	UFUNCTION(BlueprintPure)
+	bool IsTileTypeWalkable(ETileType TileType);
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE FVector GetTileLocationFromXY(int32 X, int32 Y) const
@@ -60,7 +65,13 @@ public:
 	EGridShape Shape;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	EDrawDebugTrace::Type DrawDebugTrace;
+	bool bUseEnvironment = true;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TEnumAsByte<EDrawDebugTrace::Type> DrawDebugTrace;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	float OffsetFromGround = 2.f;
 
 public:
 	// Debug
