@@ -18,12 +18,12 @@ void AGridBase::BeginPlay()
 	Super::BeginPlay();
 }
 
-FGridShapeData* AGridBase::GetShapeData() const
+FGridShapeData AGridBase::GetShapeData() const
 {
 	if (!GridShapeDataTable)
 	{
 		UE_LOG(LogGrid, Error, TEXT("GridShapeDataTable is NULL in %s"), *GetName());
-		return nullptr;
+		return FGridShapeData();
 	}
 
 	FString ShapeName = StaticEnum<EGridShape>()->GetNameStringByValue((int64) Shape);
@@ -31,9 +31,9 @@ FGridShapeData* AGridBase::GetShapeData() const
 	if (!Data)
 	{
 		UE_LOG(LogGrid, Error, TEXT("Cant find shape %s in %s data table"), *ShapeName, *GridShapeDataTable->GetName());
-		return nullptr;
+		return FGridShapeData();
 	}
-	return Data;
+	return *Data;
 }
 
 void AGridBase::SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoint InTileCount, EGridShape InShape, bool bInUseEnvironment)
@@ -149,5 +149,4 @@ bool AGridBase::IsTileTypeWalkable(ETileType TileType)
 		default:
 			return false;
 	}
-	return false;
 }

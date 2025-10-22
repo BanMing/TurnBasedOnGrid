@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Grid/GridShapes/GridShapeData.h"
 #include "Grid/TileType.h"
 
 #include "GridModifier.generated.h"
@@ -14,7 +15,10 @@ class TURNBASEDONGRID_API AGridModifier : public AActor
 	GENERATED_BODY()
 
 public:
-	AGridModifier();
+	AGridModifier(const FObjectInitializer& ObjectInitializer);
+
+	UFUNCTION(BlueprintCallable)
+	void MakeModifier();
 
 protected:
 	virtual void BeginPlay() override;

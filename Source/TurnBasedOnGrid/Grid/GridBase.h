@@ -48,8 +48,8 @@ public:
 		return GridLocationLeftCornerLocation + TileSize * FVector(X, Y, 0.f);
 	}
 
-public:
-	FGridShapeData* GetShapeData() const;
+	UFUNCTION(BlueprintPure)
+	FGridShapeData GetShapeData() const;
 
 public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
