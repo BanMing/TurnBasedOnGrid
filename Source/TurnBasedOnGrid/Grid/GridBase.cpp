@@ -2,15 +2,32 @@
 
 #include "Grid/GridBase.h"
 
-#include "Components/InstancedStaticMeshComponent.h"
+#include "Components/ChildActorComponent.h"
+#include "FunctionLibrary/GridShapeLibrary.h"
 #include "Grid/GridModifier.h"
+#include "Grid/GridVisual.h"
 #include "TurnBasedOnGrid.h"
 
 AGridBase::AGridBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	InstancesMeshComp = CreateDefaultSubobject<UInstancedStaticMeshComponent>("InstancesMeshComp");
-	InstancesMeshComp->SetupAttachment(GetRootComponent());
+	USceneComponent* SceneComponent = CreateDefaultSubobject<USceneComponent>("SceneComponent");
+	SetRootComponent(SceneComponent);
+
+	ChildActorComponent = CreateDefaultSubobject<UChildActorComponent>("ChildActor_GridMeshVisual");
+	SetRootComponent(SceneComponent);
+}
+
+void AGridBase::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	//GridVisual = Cast<AGridVisual>(ChildActorComponent->GetChildActor());
+}
+
+void AGridBase::PostRegisterAllComponents()
+{
+	Super::PostRegisterAllComponents();
+
 }
 
 void AGridBase::BeginPlay()
@@ -45,14 +62,12 @@ void AGridBase::SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoin
 	bUseEnvironment = bInUseEnvironment;
 
 	// TODO: load async
-	FGridShapeData* Data = GetShapeData();
-	if (!Data)
+	FGridShapeData Data = GetShapeData();
+	if (GridVisual == nullptr)
 	{
 		return;
 	}
-
-	InstancesMeshComp->SetStaticMesh(Data->FlatMesh.LoadSynchronous());
-	InstancesMeshComp->SetMaterial(0, Data->FlatBorderMaterial.LoadSynchronous());
+ 	GridVisual->InitializeGridVisual(this);
 	FVector2D HalfGrid = FVector2D(TileCount / 2) * FVector2D(TileSize);
 	GridLocationLeftCornerLocation = CenterLocation - FVector(HalfGrid.X, HalfGrid.Y, 0.f);
 
@@ -64,29 +79,32 @@ void AGridBase::SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoin
 	{
 		for (int32 Y = 0; Y < YCount; Y++)
 		{
+			FTileData TileData;
+			TileData.Index = FIntPoint(X, Y);
 			FTransform TileTransform;
-			TileTransform.SetScale3D(TileSize / Data->MeshSize);
+			TileTransform.SetScale3D(TileSize / Data.MeshSize);
 			FVector Location = GetTileLocationFromXY(X, Y) + FVector(0.f, 0.f, 2.f);
+			TileTransform.SetLocation(Location);
+
 			if (bInUseEnvironment)
 			{
-				if (IsTileTypeWalkable(TraceForGround(Location)))
-				{
-					TileTransform.SetLocation(Location);
-					InstancesMeshComp->AddInstance(TileTransform);
-				}
+				TileData.Type = TraceForGround(Location);
+				TileTransform.SetLocation(Location);
 			}
 			else
 			{
-				TileTransform.SetLocation(Location);
-				InstancesMeshComp->AddInstance(TileTransform);
+				TileData.Type = ETileType::Normal;
 			}
+
+			TileData.Transform = TileTransform;
+			AddGridTile(TileData);
 		}
 	}
-	SetActorLocation(FVector(0.f, 0.f, OffsetFromGround));
 }
 
 void AGridBase::SpawnGridByDefault()
 {
+	GridVisual = Cast<AGridVisual>(ChildActorComponent->GetChildActor());
 	SpawnGrid(CenterLocation, TileSize, TileCount, Shape, bUseEnvironment);
 }
 
@@ -110,7 +128,8 @@ void AGridBase::DrawDebugInfo()
 
 void AGridBase::DestroyGrid()
 {
-	InstancesMeshComp->ClearInstances();
+	GridTiles.Empty();
+	GridVisual->DestroyGridVisual();
 }
 
 ETileType AGridBase::TraceForGround(FVector& OutLocation)
@@ -138,15 +157,11 @@ ETileType AGridBase::TraceForGround(FVector& OutLocation)
 
 bool AGridBase::IsTileTypeWalkable(ETileType TileType)
 {
-	switch (TileType)
-	{
-		case ETileType::None:
-			return false;
-		case ETileType::Normal:
-			return true;
-		case ETileType::Obstacle:
-			return false;
-		default:
-			return false;
-	}
+	return UGridShapeLibrary::IsTileTypeWalkable(TileType);
+}
+
+void AGridBase::AddGridTile(FTileData TileData)
+{
+	GridTiles.Add(TileData.Index, TileData);
+	GridVisual->UpdateTileVisual(TileData);
 }

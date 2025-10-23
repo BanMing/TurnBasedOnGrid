@@ -5,13 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Grid/GridShapes/GridShapeData.h"
-#include "Kismet/KismetSystemLibrary.h"
+#include "Grid/TileData.h"
 #include "Grid/TileType.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 #include "GridBase.generated.h"
 
-class UInstancedStaticMeshComponent;
 class UDataTable;
+class AGridVisual;
+
 UCLASS()
 class TURNBASEDONGRID_API AGridBase : public AActor
 {
@@ -19,6 +21,8 @@ class TURNBASEDONGRID_API AGridBase : public AActor
 
 public:
 	AGridBase();
+	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void PostRegisterAllComponents() override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -41,6 +45,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	bool IsTileTypeWalkable(ETileType TileType);
+
+	UFUNCTION(BlueprintCallable)
+	void AddGridTile(FTileData TileData);
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE FVector GetTileLocationFromXY(int32 X, int32 Y) const
@@ -70,9 +77,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TEnumAsByte<EDrawDebugTrace::Type> DrawDebugTrace;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	float OffsetFromGround = 2.f;
-
 public:
 	// Debug
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
@@ -86,12 +90,18 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	TObjectPtr<UInstancedStaticMeshComponent> InstancesMeshComp;
+	TObjectPtr<UDataTable> GridShapeDataTable;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	TObjectPtr<UDataTable> GridShapeDataTable;
+	TObjectPtr<class UChildActorComponent> ChildActorComponent;
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<AGridVisual> GridVisual;
+
+	UPROPERTY(BlueprintReadOnly)
 	FVector GridLocationLeftCornerLocation;
+
+	UPROPERTY(BlueprintReadOnly)
+	TMap<FIntPoint, FTileData> GridTiles;
 };

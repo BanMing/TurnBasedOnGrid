@@ -28,7 +28,7 @@ public:
 	void DestroyGridVisual();
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateTileVisual();
+	void UpdateTileVisual(FTileData TileData);
 
 protected:
 	virtual void BeginPlay() override;
@@ -37,12 +37,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	TObjectPtr<class UChildActorComponent> ChildActorComponent;
 
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	float OffsetfromGround;
+
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AGridBase> Grid;
 
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AGridMeshInst> GridMeshInst;
-
-	UPROPERTY(BlueprintReadOnly)
-	float OffsetfromGround;
 };

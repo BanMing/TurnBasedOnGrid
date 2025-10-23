@@ -2,6 +2,7 @@
 
 #include "FunctionLibrary/GridShapeLibrary.h"
 
+#include "Grid/TileType.h"
 #include "TurnBasedOnGrid.h"
 
 FGridShapeData UGridShapeLibrary::GetShapeData(EGridShape GridShape)
@@ -19,4 +20,19 @@ FGridShapeData UGridShapeLibrary::GetShapeData(EGridShape GridShape)
 		return *Data;
 	}
 	return FGridShapeData();
+}
+
+bool UGridShapeLibrary::IsTileTypeWalkable(ETileType TileType)
+{
+	switch (TileType)
+	{
+		case ETileType::None:
+			return false;
+		case ETileType::Normal:
+			return true;
+		case ETileType::Obstacle:
+			return false;
+		default:
+			return false;
+	}
 }

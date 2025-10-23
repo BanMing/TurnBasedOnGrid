@@ -18,4 +18,7 @@ class TURNBASEDONGRID_API UGridShapeLibrary : public UBlueprintFunctionLibrary
 public:
 	UFUNCTION(BlueprintPure)
 	static FGridShapeData GetShapeData(EGridShape GridShape);
+
+	UFUNCTION(BlueprintPure)
+	static bool IsTileTypeWalkable(ETileType TileType);
 };
