@@ -81,7 +81,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GDM|Dispatcher")
 	FGDMOnChangePropertyVector2DDelegate OnChangePropertyVector2DDispatcher;
 
-	/** DebugMenuに登録されたプロパティ（Vector2D）が変更されたとき呼ばれるイベント */
+	/** DebugMenuに登録されたプロパティ（IntPoint）が変更されたとき呼ばれるイベント */
 	UPROPERTY(BlueprintAssignable, Category = "GDM|Dispatcher")
 	FGDMOnChangePropertyIntPointDelegate OnChangePropertyIntPointDispatcher;
 

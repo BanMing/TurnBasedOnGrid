@@ -506,7 +506,7 @@ void UGDMPropertyWidget::SetPropertyValue_Vector2D(FVector2D NewValue, bool& bHa
 	}
 }
 
-FIntPoint UGDMPropertyWidget::GetPropertyValue_IntVector2D(bool& bHasProperty)
+FIntPoint UGDMPropertyWidget::GetPropertyValue_IntPoint(bool& bHasProperty)
 {
 	bHasProperty = false;
 
@@ -539,7 +539,7 @@ FIntPoint UGDMPropertyWidget::GetPropertyValue_IntVector2D(bool& bHasProperty)
 	return FIntPoint::ZeroValue;
 }
 
-void UGDMPropertyWidget::SetPropertyValue_IntVector2D(FIntPoint NewValue, bool& bHasProperty)
+void UGDMPropertyWidget::SetPropertyValue_IntPoint(FIntPoint NewValue, bool& bHasProperty)
 {
 	bHasProperty = false;
 
@@ -571,7 +571,7 @@ void UGDMPropertyWidget::SetPropertyValue_IntVector2D(FIntPoint NewValue, bool& 
 			if (NewValue != OldValue)
 			{
 				*Value = NewValue;
-				UGameDebugMenuFunctions::GetGameDebugMenuManager(this)->CallChangePropertyVector2DDispatcher(PropertyName, TargetObject, NewValue, OldValue, PropertySaveKey);
+				UGameDebugMenuFunctions::GetGameDebugMenuManager(this)->CallChangePropertyIntPointDispatcher(PropertyName, TargetObject, NewValue, OldValue, PropertySaveKey);
 			}
 		}
 	}

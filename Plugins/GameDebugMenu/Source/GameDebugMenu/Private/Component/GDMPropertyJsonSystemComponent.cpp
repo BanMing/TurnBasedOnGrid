@@ -36,7 +36,7 @@ void UGDMPropertyJsonSystemComponent::BeginPlay()
     ListenerComp->OnChangePropertyStringDispatcher.AddUniqueDynamic(this, &UGDMPropertyJsonSystemComponent::OnChangePropertyString);
     ListenerComp->OnChangePropertyVectorDispatcher.AddUniqueDynamic(this, &UGDMPropertyJsonSystemComponent::OnChangePropertyVector);
 	ListenerComp->OnChangePropertyVector2DDispatcher.AddUniqueDynamic(this, &UGDMPropertyJsonSystemComponent::OnChangePropertyVector2D);
-	ListenerComp->OnChangePropertyIntPointDispatcher.AddUniqueDynamic(this, &UGDMPropertyJsonSystemComponent::OnChangePropertyVector2D);
+	ListenerComp->OnChangePropertyIntPointDispatcher.AddUniqueDynamic(this, &UGDMPropertyJsonSystemComponent::OnChangePropertyIntPoint);
     ListenerComp->OnChangePropertyRotatorDispatcher.AddUniqueDynamic(this, &UGDMPropertyJsonSystemComponent::OnChangePropertyRotator);
 }
 

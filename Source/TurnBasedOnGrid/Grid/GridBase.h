@@ -35,7 +35,7 @@ public:
 	void SpawnGridByDefault();
 
 	UFUNCTION(BlueprintCallable)
-	void DrawDebugInfo();
+	void DrawDebugInfo() const;
 
 	UFUNCTION(BlueprintCallable)
 	void DestroyGrid();
@@ -57,6 +57,15 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	FGridShapeData GetShapeData() const;
+
+	UFUNCTION(BlueprintPure)
+	FVector GetCursorLocationOnGrid(int32 PlayerIndex = 0) const;
+
+	UFUNCTION(BlueprintPure)
+	FIntPoint GetTileIndexfromWorldLocation(FVector Location) const;
+
+	UFUNCTION(BlueprintPure)
+	FIntPoint GetTileIndexUnderCursor(int32 PlayerIndex = 0) const;
 
 public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
@@ -87,6 +96,12 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool bDrawBottomLeft = false;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	bool bDrawMouseLocation = false;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	bool bDrawHoveredTile = false;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)

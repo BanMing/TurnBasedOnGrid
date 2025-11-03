@@ -32,7 +32,7 @@ public:
 	void ClearInstances();
 
 protected:
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TObjectPtr<class UInstancedStaticMeshComponent> InstancesMeshComp;
 
 	UPROPERTY(BlueprintReadOnly)

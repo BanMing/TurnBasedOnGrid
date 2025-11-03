@@ -3,6 +3,7 @@
 #include "FunctionLibrary/GridShapeLibrary.h"
 
 #include "Grid/TileType.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "TurnBasedOnGrid.h"
 
 FGridShapeData UGridShapeLibrary::GetShapeData(EGridShape GridShape)
@@ -35,4 +36,13 @@ bool UGridShapeLibrary::IsTileTypeWalkable(ETileType TileType)
 		default:
 			return false;
 	}
+}
+
+FVector UGridShapeLibrary::SnapVectorToVector(FVector V1, FVector V2)
+{
+	FVector Res;
+	Res.X = FMath::GridSnap(V1.X, V2.X);
+	Res.Y = FMath::GridSnap(V1.Y, V2.Y);
+	Res.Z = FMath::GridSnap(V1.Z, V2.Z);
+	return Res;
 }

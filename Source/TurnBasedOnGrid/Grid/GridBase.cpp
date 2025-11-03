@@ -4,8 +4,11 @@
 
 #include "Components/ChildActorComponent.h"
 #include "FunctionLibrary/GridShapeLibrary.h"
+#include "GameFramework/PlayerController.h"
 #include "Grid/GridModifier.h"
 #include "Grid/GridVisual.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "TurnBasedOnGrid.h"
 
 AGridBase::AGridBase()
@@ -21,13 +24,12 @@ AGridBase::AGridBase()
 void AGridBase::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	//GridVisual = Cast<AGridVisual>(ChildActorComponent->GetChildActor());
+	// GridVisual = Cast<AGridVisual>(ChildActorComponent->GetChildActor());
 }
 
 void AGridBase::PostRegisterAllComponents()
 {
 	Super::PostRegisterAllComponents();
-
 }
 
 void AGridBase::BeginPlay()
@@ -53,6 +55,65 @@ FGridShapeData AGridBase::GetShapeData() const
 	return *Data;
 }
 
+FVector AGridBase::GetCursorLocationOnGrid(int32 PlayerIndex) const
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, PlayerIndex);
+	FHitResult HitResult;
+	if (PC->GetHitResultUnderCursor(ECC_Grid, false, HitResult))
+	{
+		return HitResult.Location;
+	}
+
+	const FPlane Plane = FPlane(CenterLocation, FVector::UpVector);
+	FVector WorldLocation;
+	FVector WorldDirection;
+	PC->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+
+	const FVector LineEnd = WorldLocation + WorldDirection * 9999.f;
+	float T;
+	FVector Intersection;
+	if (UKismetMathLibrary::LinePlaneIntersection(WorldLocation, LineEnd, Plane, T, Intersection))
+	{
+		return Intersection;
+	}
+
+	return FVector(-999.f, -999.f, -999.f);
+}
+
+FIntPoint AGridBase::GetTileIndexfromWorldLocation(FVector Location) const
+{
+	FVector LocationOnGrid = Location - GridLocationLeftCornerLocation;
+	if (Shape == EGridShape::Square)
+	{
+		const FVector SnapVector = UGridShapeLibrary::SnapVectorToVector(LocationOnGrid, TileSize);
+		return FIntPoint(SnapVector.X / TileSize.X, SnapVector.Y / TileSize.Y);
+	}
+	else if (Shape == EGridShape::Hexagon)
+	{
+		const FVector SnapVector = UGridShapeLibrary::SnapVectorToVector(LocationOnGrid * FVector(1.f, 2.f, 1.f), TileSize * FVector(0.75f, 0.25f, 1.f));
+		FIntPoint TempIndex = FIntPoint(SnapVector.X / TileSize.X, SnapVector.Y / TileSize.Y) * FIntPoint(0.75f, 1.f);
+		if (TempIndex.X % 2 == 0)
+		{
+			return FIntPoint(TempIndex.X, FMath::RoundToInt(TempIndex.Y / 2.f) * 2);
+		}
+		else
+		{
+			return FIntPoint(TempIndex.X, FMath::FloorToInt(TempIndex.Y / 2.f) * 2 + 1);
+		}
+	}
+	else if (Shape == EGridShape::Triangle)
+	{
+		const FVector SnapVector = UGridShapeLibrary::SnapVectorToVector(LocationOnGrid, TileSize / FVector(1.f, 2.f, 1.f));
+		return FIntPoint(SnapVector.X / TileSize.X, SnapVector.Y / TileSize.Y) * FIntPoint(1, 2);
+	}
+	return FIntPoint(-999, -999);
+}
+
+FIntPoint AGridBase::GetTileIndexUnderCursor(int32 PlayerIndex) const
+{
+	return GetTileIndexfromWorldLocation(GetCursorLocationOnGrid(PlayerIndex));
+}
+
 void AGridBase::SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoint InTileCount, EGridShape InShape, bool bInUseEnvironment)
 {
 	CenterLocation = InCenterLocation;
@@ -67,7 +128,7 @@ void AGridBase::SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoin
 	{
 		return;
 	}
- 	GridVisual->InitializeGridVisual(this);
+	GridVisual->InitializeGridVisual(this);
 	FVector2D HalfGrid = FVector2D(TileCount / 2) * FVector2D(TileSize);
 	GridLocationLeftCornerLocation = CenterLocation - FVector(HalfGrid.X, HalfGrid.Y, 0.f);
 
@@ -83,7 +144,7 @@ void AGridBase::SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoin
 			TileData.Index = FIntPoint(X, Y);
 			FTransform TileTransform;
 			TileTransform.SetScale3D(TileSize / Data.MeshSize);
-			FVector Location = GetTileLocationFromXY(X, Y) + FVector(0.f, 0.f, 2.f);
+			FVector Location = GetTileLocationFromXY(X, Y);
 			TileTransform.SetLocation(Location);
 
 			if (bInUseEnvironment)
@@ -105,10 +166,10 @@ void AGridBase::SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoin
 void AGridBase::SpawnGridByDefault()
 {
 	GridVisual = Cast<AGridVisual>(ChildActorComponent->GetChildActor());
-	SpawnGrid(CenterLocation, TileSize, TileCount, Shape, bUseEnvironment);
+	SpawnGrid(GetActorLocation(), TileSize, TileCount, Shape, bUseEnvironment);
 }
 
-void AGridBase::DrawDebugInfo()
+void AGridBase::DrawDebugInfo() const
 {
 	if (bDrawCenter)
 	{
@@ -123,6 +184,24 @@ void AGridBase::DrawDebugInfo()
 	if (bDrawBounds)
 	{
 		DrawDebugBox(GetWorld(), CenterLocation - FVector(TileSize.X / 2, TileSize.Y / 2, 0.f), CenterLocation - GridLocationLeftCornerLocation, FColor::Yellow, false, 0.1f, 0, 10.f);
+	}
+
+	if (bDrawMouseLocation)
+	{
+		FVector CursorLocationOnGrid = GetCursorLocationOnGrid();
+		DrawDebugSphere(GetWorld(), CursorLocationOnGrid, 15.f, 5, FColor::Yellow, false, 0.1f, 5.f);
+		DrawDebugString(GetWorld(), CursorLocationOnGrid, CursorLocationOnGrid.ToCompactString(), 0, FColor::Yellow, 0.1f);
+	}
+
+	if (bDrawHoveredTile)
+	{
+		FIntPoint TileIndex = GetTileIndexUnderCursor(0);
+		const FTileData* TileData = GridTiles.Find(TileIndex);
+		if (TileData)
+		{
+			DrawDebugBox(GetWorld(), TileData->Transform.GetLocation(), FVector(35.f, 35.f, 5.f), FQuat::Identity, FColor::Green, false, 0.1f, 0.f, 5.f);
+			DrawDebugString(GetWorld(), TileData->Transform.GetLocation(), TileData->Transform.GetLocation().ToCompactString(), 0, FColor::Green, 0.1f);
+		}
 	}
 }
 
@@ -140,7 +219,7 @@ ETileType AGridBase::TraceForGround(FVector& OutLocation)
 	TArray<AActor*> ActorsToIgnore;
 	TArray<FHitResult> OutHits;
 	const bool bHit = UKismetSystemLibrary::SphereTraceMulti(this, Start, End, Radius, UEngineTypes::ConvertToTraceType(ECC_Ground), false, ActorsToIgnore, DrawDebugTrace, OutHits, true);
-	ETileType Res = ETileType::Normal;
+	ETileType Res = bHit ? ETileType::Normal : ETileType::None;
 	for (const FHitResult& HitResult : OutHits)
 	{
 		if (AGridModifier* GridModifier = Cast<AGridModifier>(HitResult.GetActor()))

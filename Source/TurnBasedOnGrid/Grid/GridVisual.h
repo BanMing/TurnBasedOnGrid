@@ -34,11 +34,11 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TObjectPtr<class UChildActorComponent> ChildActorComponent;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	float OffsetfromGround;
+	float OffsetfromGround = 2.f;
 
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AGridBase> Grid;

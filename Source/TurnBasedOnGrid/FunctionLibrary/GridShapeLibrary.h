@@ -21,4 +21,7 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	static bool IsTileTypeWalkable(ETileType TileType);
+
+	UFUNCTION(BlueprintCallable)
+	static FVector SnapVectorToVector(FVector V1, FVector V2);
 };

@@ -109,10 +109,10 @@ public:
 	void SetPropertyValue_Vector2D(FVector2D NewValue, bool& bHasProperty);
 
 	UFUNCTION(BlueprintCallable, Category = "GDM|Properties")
-	FIntPoint GetPropertyValue_IntVector2D(bool& bHasProperty);
+	FIntPoint GetPropertyValue_IntPoint(bool& bHasProperty);
 
 	UFUNCTION(BlueprintCallable, Category = "GDM|Properties")
-	void SetPropertyValue_IntVector2D(FIntPoint NewValue, bool& bHasProperty);
+	void SetPropertyValue_IntPoint(FIntPoint NewValue, bool& bHasProperty);
 
 	UFUNCTION(BlueprintCallable, Category = "GDM|Properties")
 	FRotator GetPropertyValue_Rotator(bool& bHasProperty);
