@@ -12,12 +12,15 @@ struct FTileData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	FIntPoint Index;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	ETileType Type;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
+	TArray<ETileState> States;
+
+	UPROPERTY(BlueprintReadWrite)
 	FTransform Transform;
 };

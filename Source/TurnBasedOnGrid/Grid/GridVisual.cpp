@@ -24,7 +24,7 @@ void AGridVisual::InitializeGridVisual(AGridBase* InGrid)
 		return;
 	}
 	FGridShapeData GridShapeData = Grid->GetShapeData();
-	GridMeshInst->InitializeGridMeshInst(GridShapeData.FlatMesh.LoadSynchronous(), GridShapeData.FlatBorderMaterial.LoadSynchronous(), FLinearColor::Black, ECollisionEnabled::QueryOnly);
+	GridMeshInst->InitializeGridMeshInst(GridShapeData.FlatMesh.LoadSynchronous(), GridShapeData.FlatMaterial.LoadSynchronous(), FLinearColor::Black, ECollisionEnabled::QueryOnly);
 	SetActorLocation(FVector::ZeroVector);
 	SetOffsetfromGround(OffsetfromGround);
 }
@@ -53,7 +53,7 @@ void AGridVisual::UpdateTileVisual(FTileData TileData)
 	GridMeshInst->RemoveInstance(TileData.Index);
 	if (UGridShapeLibrary::IsTileTypeWalkable(TileData.Type))
 	{
-		GridMeshInst->AddInstance(TileData.Transform, TileData.Index);
+		GridMeshInst->AddInstance(TileData.Transform, TileData.Index, TileData.States);
 	}
 }
 

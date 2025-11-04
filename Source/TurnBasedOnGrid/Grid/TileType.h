@@ -11,3 +11,11 @@ enum class ETileType : uint8
 	Normal,
 	Obstacle
 };
+
+UENUM(BlueprintType)
+enum class ETileState : uint8
+{
+	None,
+	Hovered,
+	Selected
+};

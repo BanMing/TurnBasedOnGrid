@@ -50,6 +50,12 @@ public:
 	void AddGridTile(FTileData TileData);
 
 	UFUNCTION(BlueprintCallable)
+	void AddStateToTile(FIntPoint Index, ETileState TileState);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveStateFromTile(FIntPoint Index, ETileState TileState);
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE FVector GetTileLocationFromXY(int32 X, int32 Y) const
 	{
 		return GridLocationLeftCornerLocation + TileSize * FVector(X, Y, 0.f);
@@ -111,7 +117,7 @@ protected:
 	TObjectPtr<class UChildActorComponent> ChildActorComponent;
 
 protected:
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TObjectPtr<AGridVisual> GridVisual;
 
 	UPROPERTY(BlueprintReadOnly)

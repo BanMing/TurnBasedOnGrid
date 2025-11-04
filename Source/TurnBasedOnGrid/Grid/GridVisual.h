@@ -43,6 +43,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AGridBase> Grid;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TObjectPtr<AGridMeshInst> GridMeshInst;
 };

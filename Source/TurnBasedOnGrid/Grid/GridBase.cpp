@@ -244,3 +244,25 @@ void AGridBase::AddGridTile(FTileData TileData)
 	GridTiles.Add(TileData.Index, TileData);
 	GridVisual->UpdateTileVisual(TileData);
 }
+
+void AGridBase::AddStateToTile(FIntPoint Index, ETileState TileState)
+{
+	if (FTileData* Data = GridTiles.Find(Index))
+	{
+		if (Data->States.AddUnique(TileState) >= 0)
+		{
+			GridVisual->UpdateTileVisual(*Data);
+		}
+	}
+}
+
+void AGridBase::RemoveStateFromTile(FIntPoint Index, ETileState TileState)
+{
+	if (FTileData* Data = GridTiles.Find(Index))
+	{
+		if (Data->States.Remove(TileState) >= 0)
+		{
+			GridVisual->UpdateTileVisual(*Data);
+		}
+	}
+}

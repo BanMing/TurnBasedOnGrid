@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Grid/TileType.h"
 
 #include "GridMeshInst.generated.h"
 
@@ -23,13 +24,23 @@ public:
 	void InitializeGridMeshInst(UStaticMesh* NewMesh, UMaterialInterface* Material, FLinearColor Color, ECollisionEnabled::Type Collision);
 
 	UFUNCTION(BlueprintCallable)
-	void AddInstance(FTransform InTransform, FIntPoint Index);
+	void AddInstance(FTransform InTransform, FIntPoint Index, TArray<ETileState> TileStates);
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveInstance(FIntPoint Index);
 
 	UFUNCTION(BlueprintCallable)
 	void ClearInstances();
+
+	UFUNCTION(BlueprintPure)
+	FLinearColor GetColorFromStates(TArray<ETileState> TileStates) const;
+
+protected:
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FLinearColor HoveredColor;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FLinearColor SelectedColor;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)

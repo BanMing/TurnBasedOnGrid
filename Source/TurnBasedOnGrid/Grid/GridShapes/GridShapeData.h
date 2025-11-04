@@ -39,8 +39,5 @@ struct FGridShapeData : public FTableRowBase
 	TSoftObjectPtr<UStaticMesh> FlatMesh;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	TSoftObjectPtr<UMaterialInstance> FlatBorderMaterial;
-
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	TSoftObjectPtr<UMaterialInstance> FlatFilledMaterial;
+	TSoftObjectPtr<UMaterialInstance> FlatMaterial;
 };

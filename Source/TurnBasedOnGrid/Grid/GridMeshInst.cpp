@@ -16,6 +16,9 @@ AGridMeshInst::AGridMeshInst()
 	InstancesMeshComp->SetCollisionObjectType(ECC_WorldStatic);
 	InstancesMeshComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	InstancesMeshComp->SetCollisionResponseToChannel(ECC_Grid, ECR_Block);
+
+	// tile color -> rgb
+	InstancesMeshComp->NumCustomDataFloats = 3;
 }
 
 void AGridMeshInst::BeginPlay()
@@ -31,11 +34,16 @@ void AGridMeshInst::InitializeGridMeshInst(UStaticMesh* NewMesh, UMaterialInterf
 	InstancesMeshComp->SetCollisionEnabled(Collision);
 }
 
-void AGridMeshInst::AddInstance(FTransform InTransform, FIntPoint Index)
+void AGridMeshInst::AddInstance(FTransform InTransform, FIntPoint Index, TArray<ETileState> TileStates)
 {
 	RemoveInstance(Index);
 	InstancesMeshComp->AddInstance(InTransform);
-	InstanceIndexes.Add(Index);
+	const int32 NewInstanceIndex = InstanceIndexes.Add(Index);
+
+	const FLinearColor Color = GetColorFromStates(TileStates);
+	InstancesMeshComp->SetCustomDataValue(NewInstanceIndex, 0, Color.R);
+	InstancesMeshComp->SetCustomDataValue(NewInstanceIndex, 1, Color.G);
+	InstancesMeshComp->SetCustomDataValue(NewInstanceIndex, 2, Color.B);
 }
 
 void AGridMeshInst::RemoveInstance(FIntPoint Index)
@@ -51,4 +59,22 @@ void AGridMeshInst::ClearInstances()
 {
 	InstancesMeshComp->ClearInstances();
 	InstanceIndexes.Empty();
+}
+
+FLinearColor AGridMeshInst::GetColorFromStates(TArray<ETileState> TileStates) const
+{
+	if (TileStates.Num() == 0)
+	{
+		return FLinearColor::Black;
+	}
+	if (TileStates.Contains(ETileState::Selected))
+	{
+		return SelectedColor;
+	}
+	else if (TileStates.Contains(ETileState::Hovered))
+	{
+		return HoveredColor;
+	}
+
+	return FLinearColor::Black;
 }

@@ -8,7 +8,7 @@
 
 FGridShapeData UGridShapeLibrary::GetShapeData(EGridShape GridShape)
 {
-	FString DataTablePath = TEXT("/Game/Blueprints/Grid/GridShape/DT_GridShapeData.DT_GridShapeData");
+	FString DataTablePath = TEXT("/Game/Data/GridShape/DT_GridShapeData.DT_GridShapeData");
 	if (UDataTable* GridShapeDataTable = LoadObject<UDataTable>(nullptr, *DataTablePath))
 	{
 		FString ShapeName = StaticEnum<EGridShape>()->GetNameStringByValue((int64) GridShape);

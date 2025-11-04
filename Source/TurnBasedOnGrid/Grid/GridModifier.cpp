@@ -16,6 +16,7 @@ void AGridModifier::MakeModifier()
 {
 	FGridShapeData GridShapeData = UGridShapeLibrary::GetShapeData(Shape);
 	StaticMesh->SetStaticMesh(GridShapeData.Mesh.LoadSynchronous());
+	StaticMesh->SetMaterial(0, GridShapeData.FlatMaterial.LoadSynchronous());
 
 	FVector ColorParameter = FVector::ZeroVector;
 	if (TileType == ETileType::Normal)
@@ -27,6 +28,17 @@ void AGridModifier::MakeModifier()
 		ColorParameter = FVector::ForwardVector;
 	}
 	StaticMesh->SetVectorParameterValueOnMaterials("Color", ColorParameter);
+
+	bool bIsFilled = false;
+	if (TileType == ETileType::Normal)
+	{
+		ColorParameter = FVector::OneVector;
+	}
+	else if (TileType == ETileType::Obstacle)
+	{
+		ColorParameter = FVector::ForwardVector;
+	}
+	StaticMesh->SetScalarParameterValueOnMaterials("IsFilled", bIsFilled ? 1.f : 0.f);
 
 	StaticMesh->SetCollisionResponseToChannel(ECC_Ground, ECR_Overlap);
 
