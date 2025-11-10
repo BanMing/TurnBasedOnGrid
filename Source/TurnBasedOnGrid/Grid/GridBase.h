@@ -49,20 +49,25 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddGridTile(FTileData TileData);
 
+	UFUNCTION(BlueprintPure)
+	FGridShapeData GetShapeData() const;
+
+public:
 	UFUNCTION(BlueprintCallable)
 	void AddStateToTile(FIntPoint Index, ETileState TileState);
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveStateFromTile(FIntPoint Index, ETileState TileState);
 
+	UFUNCTION(BlueprintPure)
+	bool HasStateInTile(FIntPoint Index, ETileState TileState) const;
+
+public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE FVector GetTileLocationFromXY(int32 X, int32 Y) const
 	{
 		return GridLocationLeftCornerLocation + TileSize * FVector(X, Y, 0.f);
 	}
-
-	UFUNCTION(BlueprintPure)
-	FGridShapeData GetShapeData() const;
 
 	UFUNCTION(BlueprintPure)
 	FVector GetCursorLocationOnGrid(int32 PlayerIndex = 0) const;

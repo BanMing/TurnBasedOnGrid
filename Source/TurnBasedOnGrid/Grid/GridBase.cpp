@@ -266,3 +266,13 @@ void AGridBase::RemoveStateFromTile(FIntPoint Index, ETileState TileState)
 		}
 	}
 }
+
+bool AGridBase::HasStateInTile(FIntPoint Index, ETileState TileState) const
+{
+	if (const FTileData* Data = GridTiles.Find(Index))
+	{
+		return Data->States.Contains(TileState);
+	}
+
+	return false;
+}
