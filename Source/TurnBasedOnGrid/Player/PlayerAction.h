@@ -10,6 +10,7 @@
 class UInputMappingContext;
 class AGridBase;
 class UInputAction;
+class AActionBase;
 struct FInputActionValue;
 
 UCLASS()
@@ -31,10 +32,24 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateTileUnderCursor();
 
+	UFUNCTION(BlueprintCallable)
+	void SetSelectActions(TSubclassOf<AActionBase> LeftAction, TSubclassOf<AActionBase> RightAction);
+
 protected:
 	void SetupInput();
+	void ShotdownInput();
 	void OnSelectTile(const FInputActionValue& InputActionValue);
 	void OnUnSelectTile(const FInputActionValue& InputActionValue);
+
+public:
+	UPROPERTY(BlueprintReadOnly)
+	FIntPoint CurHoveredTile;
+
+	UPROPERTY(BlueprintReadOnly)
+	FIntPoint CurSelectTile;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<AGridBase> Grid;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
@@ -48,8 +63,8 @@ protected:
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
-	TObjectPtr<AGridBase> Grid;
+	TObjectPtr<AActionBase> SelectActionLeftClick;
 
 	UPROPERTY(BlueprintReadOnly)
-	FIntPoint CurHoveredTile;
+	TObjectPtr<AActionBase> SelectActionRightClick;
 };

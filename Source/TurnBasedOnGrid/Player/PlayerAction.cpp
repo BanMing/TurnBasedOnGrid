@@ -2,6 +2,7 @@
 
 #include "Player/PlayerAction.h"
 
+#include "Action/ActionBase.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/PlayerController.h"
@@ -50,6 +51,35 @@ void APlayerAction::UpdateTileUnderCursor()
 		Grid->RemoveStateFromTile(CurHoveredTile, ETileState::Hovered);
 		CurHoveredTile = HoveredTile;
 		Grid->AddStateToTile(HoveredTile, ETileState::Hovered);
+	}
+}
+
+void APlayerAction::SetSelectActions(TSubclassOf<AActionBase> LeftAction, TSubclassOf<AActionBase> RightAction)
+{
+	if (SelectActionLeftClick)
+	{
+		SelectActionLeftClick->Destroy();
+		SelectActionLeftClick = nullptr;
+	}
+
+	if (LeftAction.Get() && GetWorld())
+	{
+		SelectActionLeftClick = GetWorld()->SpawnActorDeferred<AActionBase>(LeftAction, FTransform::Identity, this);
+		SelectActionLeftClick->InitAction(this);
+		SelectActionLeftClick->FinishSpawning(FTransform::Identity);
+	}
+
+	if (SelectActionRightClick)
+	{
+		SelectActionRightClick->Destroy();
+		SelectActionRightClick = nullptr;
+	}
+
+	if (RightAction.Get() && GetWorld())
+	{
+		SelectActionRightClick = GetWorld()->SpawnActorDeferred<AActionBase>(LeftAction, FTransform::Identity, this);
+		SelectActionRightClick->InitAction(this);
+		SelectActionRightClick->FinishSpawning(FTransform::Identity);
 	}
 }
 
@@ -105,23 +135,18 @@ void APlayerAction::ShotdownInput()
 
 void APlayerAction::OnSelectTile(const FInputActionValue& InputActionValue)
 {
-	if (!Grid)
+	if (SelectActionLeftClick)
 	{
-		return;
-	}
-	FIntPoint HoveredTile = Grid->GetTileIndexUnderCursor();
-	if (!Grid->HasStateInTile(HoveredTile, ETileState::Selected))
-	{
-		Grid->AddStateToTile(HoveredTile, ETileState::Selected);
+		FIntPoint HoveredTile = Grid->GetTileIndexUnderCursor();
+		SelectActionLeftClick->ExecuteAction(HoveredTile);
 	}
 }
 
 void APlayerAction::OnUnSelectTile(const FInputActionValue& InputActionValue)
 {
-	if (!Grid)
+	if (SelectActionRightClick)
 	{
-		return;
+		FIntPoint HoveredTile = Grid->GetTileIndexUnderCursor();
+		SelectActionRightClick->ExecuteAction(HoveredTile);
 	}
-	FIntPoint HoveredTile = Grid->GetTileIndexUnderCursor();
-	Grid->RemoveStateFromTile(HoveredTile, ETileState::Selected);
 }
