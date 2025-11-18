@@ -199,8 +199,10 @@ void AGridBase::DrawDebugInfo() const
 		const FTileData* TileData = GridTiles.Find(TileIndex);
 		if (TileData)
 		{
-			DrawDebugBox(GetWorld(), TileData->Transform.GetLocation(), FVector(35.f, 35.f, 5.f), FQuat::Identity, FColor::Green, false, 0.1f, 0.f, 5.f);
-			DrawDebugString(GetWorld(), TileData->Transform.GetLocation(), TileData->Transform.GetLocation().ToCompactString(), 0, FColor::Green, 0.1f);
+			DrawDebugBox(GetWorld(), TileData->Transform.GetLocation(), FVector(20.f, 20.f, 5.f), FQuat::Identity, FColor::Green, false, 0.1f, 0.f, 3.f);
+			const FString DebugString = FString::Printf(
+				TEXT("Index[%s]\nType[%s]\nLocation[%s]"), *TileData->Index.ToString(), *StaticEnum<ETileType>()->GetNameStringByValue((int64) TileData->Type), *TileData->Transform.GetLocation().ToCompactString());
+			DrawDebugString(GetWorld(), TileData->Transform.GetLocation(), DebugString, 0, FColor::Green, 0.1f);
 		}
 	}
 }
@@ -245,6 +247,16 @@ void AGridBase::AddGridTile(FTileData TileData)
 	GridVisual->UpdateTileVisual(TileData);
 }
 
+void AGridBase::RemoveGridTile(FIntPoint Index)
+{
+	if (GridTiles.Remove(Index))
+	{
+		FTileData TileData;
+		TileData.Index = Index;
+		GridVisual->UpdateTileVisual(TileData);
+	}
+}
+
 void AGridBase::AddStateToTile(FIntPoint Index, ETileState TileState)
 {
 	if (FTileData* Data = GridTiles.Find(Index))
@@ -275,4 +287,35 @@ bool AGridBase::HasStateInTile(FIntPoint Index, ETileState TileState) const
 	}
 
 	return false;
+}
+
+bool AGridBase::IsIndexValid(FIntPoint Index) const
+{
+	return GridTiles.Contains(Index);
+}
+
+FVector AGridBase::GetTitleScale() const
+{
+	FGridShapeData Data = GetShapeData();
+	return FVector(TileSize / Data.MeshSize);
+}
+
+FRotator AGridBase::GetTitleRotationfromGridIndex(FIntPoint Index) const
+{
+	if (Shape == EGridShape::Triangle)
+	{
+		return FRotator::ZeroRotator;
+	}
+
+	float Yaw = (Index.X % 2) == 0.f ? 180.f : 0.f + (Index.Y % 2) == 0.f ? 180.f : 0.f;
+	return FRotator(0.f, 0.f, Yaw);
+}
+
+FTileData AGridBase::GetTileDatafromGridIndex(FIntPoint Index) const
+{
+	if (GridTiles.Contains(Index))
+	{
+		return GridTiles[Index];
+	}
+	return FTileData();
 }

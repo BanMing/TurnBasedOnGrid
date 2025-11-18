@@ -37,8 +37,8 @@ void AGridMeshInst::InitializeGridMeshInst(UStaticMesh* NewMesh, UMaterialInterf
 void AGridMeshInst::AddInstance(FTransform InTransform, FIntPoint Index, TArray<ETileState> TileStates)
 {
 	RemoveInstance(Index);
-	InstancesMeshComp->AddInstance(InTransform);
-	const int32 NewInstanceIndex = InstanceIndexes.Add(Index);
+	const int32 NewInstanceIndex = InstancesMeshComp->AddInstance(InTransform);
+	InstanceIndexes.Add(Index);
 
 	const FLinearColor Color = GetColorFromStates(TileStates);
 	InstancesMeshComp->SetCustomDataValue(NewInstanceIndex, 0, Color.R);

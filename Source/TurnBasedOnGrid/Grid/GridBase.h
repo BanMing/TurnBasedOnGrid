@@ -48,9 +48,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddGridTile(FTileData TileData);
-
+	
+	UFUNCTION(BlueprintCallable)
+	void RemoveGridTile(FIntPoint Index);
+	
 	UFUNCTION(BlueprintPure)
 	FGridShapeData GetShapeData() const;
+
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -77,6 +81,18 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	FIntPoint GetTileIndexUnderCursor(int32 PlayerIndex = 0) const;
+
+	UFUNCTION(BlueprintPure)
+	bool IsIndexValid(FIntPoint Index) const;
+
+	UFUNCTION(BlueprintPure)
+	FVector GetTitleScale() const;
+
+	UFUNCTION(BlueprintPure)
+	FRotator GetTitleRotationfromGridIndex(FIntPoint Index) const;
+	
+	UFUNCTION(BlueprintPure)
+	FTileData GetTileDatafromGridIndex(FIntPoint Index) const;
 
 public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)

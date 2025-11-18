@@ -77,7 +77,7 @@ void APlayerAction::SetSelectActions(TSubclassOf<AActionBase> LeftAction, TSubcl
 
 	if (RightAction.Get() && GetWorld())
 	{
-		SelectActionRightClick = GetWorld()->SpawnActorDeferred<AActionBase>(LeftAction, FTransform::Identity, this);
+		SelectActionRightClick = GetWorld()->SpawnActorDeferred<AActionBase>(RightAction, FTransform::Identity, this);
 		SelectActionRightClick->InitAction(this);
 		SelectActionRightClick->FinishSpawning(FTransform::Identity);
 	}
@@ -105,8 +105,8 @@ void APlayerAction::SetupInput()
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PC->InputComponent))
 	{
-		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Started, this, &ThisClass::OnSelectTile);
-		EnhancedInputComponent->BindAction(UnSelectAction, ETriggerEvent::Started, this, &ThisClass::OnUnSelectTile);
+		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Triggered, this, &ThisClass::OnLeftClicked);
+		EnhancedInputComponent->BindAction(UnSelectAction, ETriggerEvent::Triggered, this, &ThisClass::OnRightClicked);
 	}
 }
 
@@ -133,7 +133,7 @@ void APlayerAction::ShotdownInput()
 	}
 }
 
-void APlayerAction::OnSelectTile(const FInputActionValue& InputActionValue)
+void APlayerAction::OnLeftClicked(const FInputActionValue& InputActionValue)
 {
 	if (SelectActionLeftClick)
 	{
@@ -142,7 +142,7 @@ void APlayerAction::OnSelectTile(const FInputActionValue& InputActionValue)
 	}
 }
 
-void APlayerAction::OnUnSelectTile(const FInputActionValue& InputActionValue)
+void APlayerAction::OnRightClicked(const FInputActionValue& InputActionValue)
 {
 	if (SelectActionRightClick)
 	{

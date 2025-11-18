@@ -38,8 +38,8 @@ public:
 protected:
 	void SetupInput();
 	void ShotdownInput();
-	void OnSelectTile(const FInputActionValue& InputActionValue);
-	void OnUnSelectTile(const FInputActionValue& InputActionValue);
+	void OnLeftClicked(const FInputActionValue& InputActionValue);
+	void OnRightClicked(const FInputActionValue& InputActionValue);
 
 public:
 	UPROPERTY(BlueprintReadOnly)
