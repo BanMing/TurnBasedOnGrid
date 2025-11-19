@@ -130,6 +130,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool bDrawHoveredTile = false;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	bool bDrawTileInfo = false;
+
 protected:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	TObjectPtr<UDataTable> GridShapeDataTable;

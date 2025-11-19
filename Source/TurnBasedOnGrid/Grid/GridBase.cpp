@@ -205,6 +205,17 @@ void AGridBase::DrawDebugInfo() const
 			DrawDebugString(GetWorld(), TileData->Transform.GetLocation(), DebugString, 0, FColor::Green, 0.1f);
 		}
 	}
+	if (bDrawTileInfo)
+	{
+		for (const TPair<FIntPoint, FTileData>& KV : GridTiles)
+		{
+			if (KV.Value.Type == ETileType::Normal)
+			{
+				const FString DebugString = FString::Printf(TEXT("[%d,%d]"), KV.Key.X, KV.Key.Y);
+				DrawDebugString(GetWorld(), KV.Value.Transform.GetLocation() , DebugString, 0, FColor::Red, 1.f);
+			}
+		}
+	}
 }
 
 void AGridBase::DestroyGrid()
