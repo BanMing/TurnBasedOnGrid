@@ -11,6 +11,9 @@
 
 #include "GridBase.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTileDataUpdateEvent, FIntPoint, Index);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGridDestroyedEvent);
+
 class UDataTable;
 class AGridVisual;
 
@@ -48,13 +51,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddGridTile(FTileData TileData);
-	
+
 	UFUNCTION(BlueprintCallable)
 	void RemoveGridTile(FIntPoint Index);
-	
+
 	UFUNCTION(BlueprintPure)
 	FGridShapeData GetShapeData() const;
-
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -90,9 +92,16 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	FRotator GetTitleRotationfromGridIndex(FIntPoint Index) const;
-	
+
 	UFUNCTION(BlueprintPure)
 	FTileData GetTileDatafromGridIndex(FIntPoint Index) const;
+
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnTileDataUpdateEvent OnTileDataUpdateEvent;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnGridDestroyedEvent OnGridDestroyedEvent;
 
 public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)

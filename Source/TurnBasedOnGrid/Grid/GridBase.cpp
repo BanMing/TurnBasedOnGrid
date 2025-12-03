@@ -212,7 +212,7 @@ void AGridBase::DrawDebugInfo() const
 			if (KV.Value.Type == ETileType::Normal)
 			{
 				const FString DebugString = FString::Printf(TEXT("[%d,%d]"), KV.Key.X, KV.Key.Y);
-				DrawDebugString(GetWorld(), KV.Value.Transform.GetLocation() , DebugString, 0, FColor::Red, 1.f);
+				DrawDebugString(GetWorld(), KV.Value.Transform.GetLocation(), DebugString, 0, FColor::Red, 1.f);
 			}
 		}
 	}
@@ -222,6 +222,7 @@ void AGridBase::DestroyGrid()
 {
 	GridTiles.Empty();
 	GridVisual->DestroyGridVisual();
+	OnGridDestroyedEvent.Broadcast();
 }
 
 ETileType AGridBase::TraceForGround(FVector& OutLocation)
@@ -256,6 +257,7 @@ void AGridBase::AddGridTile(FTileData TileData)
 {
 	GridTiles.Add(TileData.Index, TileData);
 	GridVisual->UpdateTileVisual(TileData);
+	OnTileDataUpdateEvent.Broadcast(TileData.Index);
 }
 
 void AGridBase::RemoveGridTile(FIntPoint Index)
@@ -265,6 +267,7 @@ void AGridBase::RemoveGridTile(FIntPoint Index)
 		FTileData TileData;
 		TileData.Index = Index;
 		GridVisual->UpdateTileVisual(TileData);
+		OnTileDataUpdateEvent.Broadcast(TileData.Index);
 	}
 }
 
@@ -275,6 +278,7 @@ void AGridBase::AddStateToTile(FIntPoint Index, ETileState TileState)
 		if (Data->States.AddUnique(TileState) >= 0)
 		{
 			GridVisual->UpdateTileVisual(*Data);
+			OnTileDataUpdateEvent.Broadcast(Index);
 		}
 	}
 }
@@ -286,6 +290,7 @@ void AGridBase::RemoveStateFromTile(FIntPoint Index, ETileState TileState)
 		if (Data->States.Remove(TileState) >= 0)
 		{
 			GridVisual->UpdateTileVisual(*Data);
+			OnTileDataUpdateEvent.Broadcast(Index);
 		}
 	}
 }
