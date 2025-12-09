@@ -16,6 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGridDestroyedEvent);
 
 class UDataTable;
 class AGridVisual;
+class AGridPathfinding;
 
 UCLASS()
 class TURNBASEDONGRID_API AGridBase : public AActor
@@ -47,7 +48,10 @@ public:
 	ETileType TraceForGround(FVector& OutLocation);
 
 	UFUNCTION(BlueprintPure)
-	bool IsTileTypeWalkable(ETileType TileType);
+	bool IsTileTypeWalkable(ETileType TileType) const;
+
+	UFUNCTION(BlueprintPure)
+	bool IsWalkableByIndex(FIntPoint Index) const;
 
 	UFUNCTION(BlueprintCallable)
 	void AddGridTile(FTileData TileData);
@@ -67,6 +71,12 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	bool HasStateInTile(FIntPoint Index, ETileState TileState) const;
+
+	UFUNCTION(BlueprintPure)
+	TArray<FIntPoint> GetAllTilesWithState(ETileState TileState) const;
+
+	UFUNCTION(BlueprintCallable)
+	void ClearStateFromTiles(ETileState TileState);
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -99,7 +109,7 @@ public:
 public:
 	UPROPERTY(BlueprintAssignable)
 	FOnTileDataUpdateEvent OnTileDataUpdateEvent;
-	
+
 	UPROPERTY(BlueprintAssignable)
 	FOnGridDestroyedEvent OnGridDestroyedEvent;
 
@@ -121,6 +131,12 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TEnumAsByte<EDrawDebugTrace::Type> DrawDebugTrace;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TObjectPtr<AGridVisual> GridVisual;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TObjectPtr<AGridPathfinding> GridPathfinding;
 
 public:
 	// Debug
@@ -147,12 +163,12 @@ protected:
 	TObjectPtr<UDataTable> GridShapeDataTable;
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
-	TObjectPtr<class UChildActorComponent> ChildActorComponent;
+	TObjectPtr<class UChildActorComponent> ChildActor_GridMeshVisual;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	TObjectPtr<class UChildActorComponent> ChildActor_GridPathfinding;
 
 protected:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TObjectPtr<AGridVisual> GridVisual;
-
 	UPROPERTY(BlueprintReadOnly)
 	FVector GridLocationLeftCornerLocation;
 

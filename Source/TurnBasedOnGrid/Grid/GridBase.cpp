@@ -5,8 +5,9 @@
 #include "Components/ChildActorComponent.h"
 #include "FunctionLibrary/GridShapeLibrary.h"
 #include "GameFramework/PlayerController.h"
-#include "Grid/GridModifier.h"
-#include "Grid/GridVisual.h"
+#include "Grid/GridPathfinding.h"
+#include "Grid/Visual/GridModifier.h"
+#include "Grid/Visual/GridVisual.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "TurnBasedOnGrid.h"
@@ -17,14 +18,14 @@ AGridBase::AGridBase()
 	USceneComponent* SceneComponent = CreateDefaultSubobject<USceneComponent>("SceneComponent");
 	SetRootComponent(SceneComponent);
 
-	ChildActorComponent = CreateDefaultSubobject<UChildActorComponent>("ChildActor_GridMeshVisual");
+	ChildActor_GridMeshVisual = CreateDefaultSubobject<UChildActorComponent>("ChildActor_GridMeshVisual");
+	ChildActor_GridPathfinding = CreateDefaultSubobject<UChildActorComponent>("ChildActor_GridPathfinding");
 	SetRootComponent(SceneComponent);
 }
 
 void AGridBase::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	// GridVisual = Cast<AGridVisual>(ChildActorComponent->GetChildActor());
 }
 
 void AGridBase::PostRegisterAllComponents()
@@ -165,8 +166,11 @@ void AGridBase::SpawnGrid(FVector InCenterLocation, FVector InTileSize, FIntPoin
 
 void AGridBase::SpawnGridByDefault()
 {
-	GridVisual = Cast<AGridVisual>(ChildActorComponent->GetChildActor());
+	GridVisual = Cast<AGridVisual>(ChildActor_GridMeshVisual->GetChildActor());
 	SpawnGrid(GetActorLocation(), TileSize, TileCount, Shape, bUseEnvironment);
+
+	GridPathfinding = Cast<AGridPathfinding>(ChildActor_GridPathfinding->GetChildActor());
+	GridPathfinding->InitializeGridPathfinding(this);
 }
 
 void AGridBase::DrawDebugInfo() const
@@ -222,6 +226,10 @@ void AGridBase::DestroyGrid()
 {
 	GridTiles.Empty();
 	GridVisual->DestroyGridVisual();
+	if (GridPathfinding)
+	{
+		GridPathfinding->FinalizeGridPathfinding();
+	}
 	OnGridDestroyedEvent.Broadcast();
 }
 
@@ -248,9 +256,18 @@ ETileType AGridBase::TraceForGround(FVector& OutLocation)
 	return Res;
 }
 
-bool AGridBase::IsTileTypeWalkable(ETileType TileType)
+bool AGridBase::IsTileTypeWalkable(ETileType TileType) const
 {
 	return UGridShapeLibrary::IsTileTypeWalkable(TileType);
+}
+
+bool AGridBase::IsWalkableByIndex(FIntPoint Index) const
+{
+	if (GridTiles.Contains(Index))
+	{
+		return UGridShapeLibrary::IsTileTypeWalkable(GridTiles[Index].Type);
+	}
+	return false;
 }
 
 void AGridBase::AddGridTile(FTileData TileData)
@@ -303,6 +320,28 @@ bool AGridBase::HasStateInTile(FIntPoint Index, ETileState TileState) const
 	}
 
 	return false;
+}
+
+TArray<FIntPoint> AGridBase::GetAllTilesWithState(ETileState TileState) const
+{
+	TArray<FIntPoint> Res;
+	for (const TPair<FIntPoint, FTileData>& KV : GridTiles)
+	{
+		if (KV.Value.States.Contains(TileState))
+		{
+			Res.Add(KV.Key);
+		}
+	}
+	return Res;
+}
+
+void AGridBase::ClearStateFromTiles(ETileState TileState)
+{
+	TArray<FIntPoint> Tiles = GetAllTilesWithState(TileState);
+	for (const FIntPoint& Tile : Tiles)
+	{
+		RemoveStateFromTile(Tile, TileState);
+	}
 }
 
 bool AGridBase::IsIndexValid(FIntPoint Index) const

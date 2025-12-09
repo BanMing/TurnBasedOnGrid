@@ -33,13 +33,19 @@ public:
 	void UpdateTileUnderCursor();
 
 	UFUNCTION(BlueprintCallable)
-	void SetSelectActions(TSubclassOf<AActionBase> LeftAction, TSubclassOf<AActionBase> RightAction);
+	void SetClickActions(TSubclassOf<AActionBase> LeftAction, TSubclassOf<AActionBase> RightAction);
+	
+	UFUNCTION(BlueprintCallable)
+	void SetTriggerActions(TSubclassOf<AActionBase> LeftAction, TSubclassOf<AActionBase> RightAction);
 
 protected:
 	void SetupInput();
 	void ShotdownInput();
 	void OnLeftClicked(const FInputActionValue& InputActionValue);
 	void OnRightClicked(const FInputActionValue& InputActionValue);
+
+	void OnLeftTriggered(const FInputActionValue& InputActionValue);
+	void OnRightTriggered(const FInputActionValue& InputActionValue);
 
 public:
 	UPROPERTY(BlueprintReadOnly)
@@ -67,4 +73,10 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AActionBase> SelectActionRightClick;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<AActionBase> SelectActionLeftTrigger;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<AActionBase> SelectActionRightTrigger;
 };

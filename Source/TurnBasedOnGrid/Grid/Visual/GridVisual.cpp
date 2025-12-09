@@ -1,10 +1,10 @@
 // Copyright BanMing
-#include "Grid/GridVisual.h"
+#include "Grid/Visual/GridVisual.h"
 
 #include "Components/ChildActorComponent.h"
 #include "FunctionLibrary/GridShapeLibrary.h"
 #include "Grid/GridBase.h"
-#include "Grid/GridMeshInst.h"
+#include "Grid/Visual/GridMeshInst.h"
 #include "Grid/GridShapes/GridShapeData.h"
 #include "Grid/TileData.h"
 
@@ -42,6 +42,7 @@ void AGridVisual::DestroyGridVisual()
 	{
 		GridMeshInst->ClearInstances();
 	}
+	Grid = nullptr;
 }
 
 void AGridVisual::UpdateTileVisual(FTileData TileData)

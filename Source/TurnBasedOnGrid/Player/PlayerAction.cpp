@@ -54,7 +54,7 @@ void APlayerAction::UpdateTileUnderCursor()
 	}
 }
 
-void APlayerAction::SetSelectActions(TSubclassOf<AActionBase> LeftAction, TSubclassOf<AActionBase> RightAction)
+void APlayerAction::SetClickActions(TSubclassOf<AActionBase> LeftAction, TSubclassOf<AActionBase> RightAction)
 {
 	if (SelectActionLeftClick)
 	{
@@ -83,6 +83,35 @@ void APlayerAction::SetSelectActions(TSubclassOf<AActionBase> LeftAction, TSubcl
 	}
 }
 
+void APlayerAction::SetTriggerActions(TSubclassOf<AActionBase> LeftAction, TSubclassOf<AActionBase> RightAction)
+{
+	if (SelectActionRightTrigger)
+	{
+		SelectActionLeftTrigger->Destroy();
+		SelectActionLeftTrigger = nullptr;
+	}
+
+	if (LeftAction.Get() && GetWorld())
+	{
+		SelectActionLeftTrigger = GetWorld()->SpawnActorDeferred<AActionBase>(LeftAction, FTransform::Identity, this);
+		SelectActionLeftTrigger->InitAction(this);
+		SelectActionLeftTrigger->FinishSpawning(FTransform::Identity);
+	}
+
+	if (SelectActionRightTrigger)
+	{
+		SelectActionRightTrigger->Destroy();
+		SelectActionRightTrigger = nullptr;
+	}
+
+	if (RightAction.Get() && GetWorld())
+	{
+		SelectActionRightTrigger = GetWorld()->SpawnActorDeferred<AActionBase>(RightAction, FTransform::Identity, this);
+		SelectActionRightTrigger->InitAction(this);
+		SelectActionRightTrigger->FinishSpawning(FTransform::Identity);
+	}
+}
+
 void APlayerAction::SetupInput()
 {
 	check(InputContext);
@@ -105,8 +134,11 @@ void APlayerAction::SetupInput()
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PC->InputComponent))
 	{
-		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Triggered, this, &ThisClass::OnLeftClicked);
-		EnhancedInputComponent->BindAction(UnSelectAction, ETriggerEvent::Triggered, this, &ThisClass::OnRightClicked);
+		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Started, this, &ThisClass::OnLeftClicked);
+		EnhancedInputComponent->BindAction(UnSelectAction, ETriggerEvent::Started, this, &ThisClass::OnRightClicked);
+
+		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Triggered, this, &ThisClass::OnLeftTriggered);
+		EnhancedInputComponent->BindAction(UnSelectAction, ETriggerEvent::Triggered, this, &ThisClass::OnRightTriggered);
 	}
 }
 
@@ -148,5 +180,23 @@ void APlayerAction::OnRightClicked(const FInputActionValue& InputActionValue)
 	{
 		FIntPoint HoveredTile = Grid->GetTileIndexUnderCursor();
 		SelectActionRightClick->ExecuteAction(HoveredTile);
+	}
+}
+
+void APlayerAction::OnLeftTriggered(const FInputActionValue& InputActionValue)
+{
+	if (SelectActionLeftTrigger)
+	{
+		FIntPoint HoveredTile = Grid->GetTileIndexUnderCursor();
+		SelectActionLeftTrigger->ExecuteAction(HoveredTile);
+	}
+}
+
+void APlayerAction::OnRightTriggered(const FInputActionValue& InputActionValue)
+{
+	if (SelectActionRightTrigger)
+	{
+		FIntPoint HoveredTile = Grid->GetTileIndexUnderCursor();
+		SelectActionRightTrigger->ExecuteAction(HoveredTile);
 	}
 }

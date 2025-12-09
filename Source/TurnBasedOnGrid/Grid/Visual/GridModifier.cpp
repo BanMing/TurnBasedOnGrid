@@ -1,6 +1,6 @@
 // Copyright BanMing
 
-#include "Grid/GridModifier.h"
+#include "Grid/Visual/GridModifier.h"
 
 #include "FunctionLibrary/GridShapeLibrary.h"
 #include "TurnBasedOnGrid.h"

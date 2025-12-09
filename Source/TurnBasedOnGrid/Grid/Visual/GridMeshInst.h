@@ -42,6 +42,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FLinearColor SelectedColor;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FLinearColor NeighborColor;
+
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	TObjectPtr<class UInstancedStaticMeshComponent> InstancesMeshComp;

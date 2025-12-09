@@ -17,5 +17,6 @@ enum class ETileState : uint8
 {
 	None,
 	Hovered,
-	Selected
+	Selected,
+	IsNeighbor
 };
