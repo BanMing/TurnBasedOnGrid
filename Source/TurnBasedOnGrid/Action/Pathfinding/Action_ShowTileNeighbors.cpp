@@ -2,7 +2,7 @@
 #include "Action/Pathfinding/Action_ShowTileNeighbors.h"
 
 #include "Grid/GridBase.h"
-#include "Grid/GridPathfinding.h"
+#include "Grid/Pathfinding/GridPathfinding.h"
 #include "Player/PlayerAction.h"
 
 void AAction_ShowTileNeighbors::ExecuteAction_Implementation(FIntPoint Index)

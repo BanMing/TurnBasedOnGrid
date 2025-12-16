@@ -5,7 +5,7 @@
 #include "Components/ChildActorComponent.h"
 #include "FunctionLibrary/GridShapeLibrary.h"
 #include "GameFramework/PlayerController.h"
-#include "Grid/GridPathfinding.h"
+#include "Grid/Pathfinding/GridPathfinding.h"
 #include "Grid/Visual/GridModifier.h"
 #include "Grid/Visual/GridVisual.h"
 #include "Kismet/GameplayStatics.h"
