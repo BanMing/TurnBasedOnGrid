@@ -44,7 +44,7 @@ void AGridMeshInst::AddInstance(FTransform InTransform, FIntPoint Index, TArray<
 	InstancesMeshComp->SetCustomDataValue(NewInstanceIndex, 0, Color.R);
 	InstancesMeshComp->SetCustomDataValue(NewInstanceIndex, 1, Color.G);
 	InstancesMeshComp->SetCustomDataValue(NewInstanceIndex, 2, Color.B);
-	const float IsFilled = TileStates.Contains(ETileState::Selected) || TileStates.Contains(ETileState::IsNeighbor) ? 1.f : 0.f;
+	const float IsFilled = TileStates.Contains(ETileState::Selected) || TileStates.Contains(ETileState::IsNeighbor) || TileStates.Contains(ETileState::IsInPath) ? 1.f : 0.f;
 	InstancesMeshComp->SetCustomDataValue(NewInstanceIndex, 3, IsFilled);
 }
 
@@ -81,6 +81,10 @@ FLinearColor AGridMeshInst::GetColorFromStates(TArray<ETileState> TileStates) co
 	else if (TileStates.Contains(ETileState::IsNeighbor))
 	{
 		return NeighborColor;
+	}
+	else if (TileStates.Contains(ETileState::IsInPath))
+	{
+		return InPathColor;
 	}
 
 	return FLinearColor::Black;

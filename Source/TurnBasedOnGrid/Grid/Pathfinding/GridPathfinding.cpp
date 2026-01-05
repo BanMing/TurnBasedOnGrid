@@ -204,7 +204,7 @@ TArray<FIntPoint> AGridPathfinding::GeneratePath()
 			Current = PathfindingData[Current].PrevIndex;
 		}
 	}
-	Res.Reserve(Res.Num());
+	Algo::Reverse(Res);
 	return Res;
 }
 
@@ -228,7 +228,7 @@ bool AGridPathfinding::DiscoverNextNeighbor()
 {
 	CurrentNeighbor = CurrentNeighbors[0];
 	CurrentNeighbors.RemoveAt(0);
-	if (AnalysedTileIndexes.Contains(CurrentNeighbor.Index))
+	if (!AnalysedTileIndexes.Contains(CurrentNeighbor.Index))
 	{
 		int32 CostFromStart = CurrentDiscoveredTile.CostFromStart + CurrentNeighbor.CostToEnterTile;
 		int32 IndexInDiscovered = DiscoveredTileIndexes.Find(CurrentNeighbor.Index);
@@ -253,7 +253,7 @@ bool AGridPathfinding::DiscoverNextNeighbor()
 		Data.CostToEnterTile = CurrentNeighbor.CostToEnterTile;
 		Data.CostFromStart = CostFromStart;
 		Data.MinCostToTarget = GetMinCostBetweenTwoTiles(CurrentNeighbor.Index, TargetIndex, bFindingIncludeDiagonals);
-		Data.PrevIndex = CurrentNeighbor.Index;
+		Data.PrevIndex = CurrentNeighbor.PrevIndex;
 		DiscoverTile(Data);
 
 		return CurrentNeighbor.Index == TargetIndex;

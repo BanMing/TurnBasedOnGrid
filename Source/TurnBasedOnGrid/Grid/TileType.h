@@ -18,5 +18,6 @@ enum class ETileState : uint8
 	None,
 	Hovered,
 	Selected,
-	IsNeighbor
+	IsNeighbor,
+	IsInPath
 };

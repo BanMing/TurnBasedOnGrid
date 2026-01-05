@@ -11,10 +11,10 @@ void AAction_ShowTileNeighbors::ExecuteAction_Implementation(FIntPoint Index)
 	check(PlayerAction->Grid);
 
 	PlayerAction->Grid->ClearStateFromTiles(ETileState::IsNeighbor);
-	TArray<FIntPoint> Neihbors = PlayerAction->Grid->GridPathfinding->GetValidTileNeihbors(Index, bIncludeDiagonals);
-	for (const FIntPoint& Neihbor : Neihbors)
+	TArray<FPathfindingData> Neihbors = PlayerAction->Grid->GridPathfinding->GetValidTileNeighbors(Index, bIncludeDiagonals);
+	for (const FPathfindingData& Neihbor : Neihbors)
 	{
-		PlayerAction->Grid->AddStateToTile(Neihbor, ETileState::IsNeighbor);
+		PlayerAction->Grid->AddStateToTile(Neihbor.Index, ETileState::IsNeighbor);
 	}
 }
 
