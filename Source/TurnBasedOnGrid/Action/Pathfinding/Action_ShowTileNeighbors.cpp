@@ -18,8 +18,8 @@ void AAction_ShowTileNeighbors::ExecuteAction_Implementation(FIntPoint Index)
 	}
 }
 
-void AAction_ShowTileNeighbors::Destroyed()
+void AAction_ShowTileNeighbors::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	Super::EndPlay(EndPlayReason);
 	ExecuteAction(FIntPoint(-999, -999));
-	Super::Destroyed();
 }

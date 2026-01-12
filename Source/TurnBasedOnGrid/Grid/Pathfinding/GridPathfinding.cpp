@@ -55,6 +55,13 @@ TArray<FIntPoint> AGridPathfinding::GetTileNeighbors(FIntPoint Index, bool bIncl
 	return TArray<FIntPoint>();
 }
 
+bool AGridPathfinding::IsDiagonals(FIntPoint Index1, FIntPoint Index2) const
+{
+	TArray<FIntPoint> Neighbors = GetTileNeighbors(Index1, false);
+
+	return !Neighbors.Contains(Index2);
+}
+
 TArray<FIntPoint> AGridPathfinding::FindPath(FIntPoint Start, FIntPoint Target, bool bIncludeDiagonals)
 {
 	ResetPathfindingInfo();
@@ -163,6 +170,7 @@ void AGridPathfinding::DiscoverTile(FPathfindingData TilePathData)
 {
 	PathfindingData.Add(TilePathData.Index, TilePathData);
 	InsertTileInDiscoveredArray(TilePathData);
+	OnPathfindingDataUpdated.Broadcast(TilePathData.Index);
 }
 
 int32 AGridPathfinding::GetMinCostBetweenTwoTiles(FIntPoint Index1, FIntPoint Index2, bool bIncludeDiagonals) const
@@ -174,6 +182,13 @@ int32 AGridPathfinding::GetMinCostBetweenTwoTiles(FIntPoint Index1, FIntPoint In
 	}
 
 	return FMath::Abs(Index.X) + FMath::Abs(Index.Y);
+}
+
+int32 AGridPathfinding::GetTileSortingCost(FPathfindingData TilePathData) const
+{
+	int32 SortingCost = TilePathData.CostFromStart + TilePathData.MinCostToTarget;
+	const bool bIsDiagonals = IsDiagonals(TilePathData.Index, TilePathData.PrevIndex);
+	return SortingCost * 2 + bIsDiagonals ? 1 : 0;
 }
 
 bool AGridPathfinding::AnalyseNextDiscoveredTile()
@@ -264,7 +279,7 @@ bool AGridPathfinding::DiscoverNextNeighbor()
 void AGridPathfinding::InsertTileInDiscoveredArray(FPathfindingData TileData)
 {
 	// CostÔ½´ó¿¿Ç°
-	int32 SortingCost = TileData.CostFromStart + TileData.MinCostToTarget;
+	int32 SortingCost = GetTileSortingCost(TileData);
 	if (DiscoveredTileSortingCosts.Num() == 0)
 	{
 		DiscoveredTileSortingCosts.Add(SortingCost);
@@ -299,4 +314,5 @@ void AGridPathfinding::ResetPathfindingInfo()
 	DiscoveredTileIndexes.Empty();
 	DiscoveredTileSortingCosts.Empty();
 	AnalysedTileIndexes.Empty();
+	OnPathfindingDataCleared.Broadcast();
 }

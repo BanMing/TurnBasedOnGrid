@@ -10,6 +10,9 @@
 
 class AGridBase;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPathfindingDataUpdatedEvent, FIntPoint, Index);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPathfindingDataClearedEvent);
+
 UCLASS()
 class TURNBASEDONGRID_API AGridPathfinding : public AActor
 {
@@ -27,6 +30,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	TArray<FIntPoint> GetTileNeighbors(FIntPoint Index, bool bIncludeDiagonals) const;
 
+	UFUNCTION(BlueprintPure)
+	bool IsDiagonals(FIntPoint Index1, FIntPoint Index2) const;
+
 	UFUNCTION(BlueprintCallable)
 	TArray<FIntPoint> FindPath(FIntPoint Start, FIntPoint Target, bool bIncludeDiagonals);
 
@@ -39,12 +45,20 @@ protected:
 	bool IsInputDataValid() const;
 	void DiscoverTile(FPathfindingData TilePathData);
 	int32 GetMinCostBetweenTwoTiles(FIntPoint Index1, FIntPoint Index2, bool bIncludeDiagonals) const;
+	int32 GetTileSortingCost(FPathfindingData TilePathData) const;
 	bool AnalyseNextDiscoveredTile();
 	TArray<FIntPoint> GeneratePath();
 	FPathfindingData PullCheapestTileOutOfDiscoveredList();
 	bool DiscoverNextNeighbor();
 	void InsertTileInDiscoveredArray(FPathfindingData TileData);
 	void ResetPathfindingInfo();
+
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnPathfindingDataUpdatedEvent OnPathfindingDataUpdated;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnPathfindingDataClearedEvent OnPathfindingDataCleared;
 
 protected:
 	UPROPERTY(BlueprintReadOnly)

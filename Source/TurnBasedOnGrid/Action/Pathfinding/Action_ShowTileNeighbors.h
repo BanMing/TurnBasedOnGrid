@@ -18,7 +18,8 @@ class TURNBASEDONGRID_API AAction_ShowTileNeighbors : public AActionBase
 public:
 	virtual void ExecuteAction_Implementation(FIntPoint Index) override;
 
-	virtual void Destroyed() override;
+protected:
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 
 public:
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = "true"))

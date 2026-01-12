@@ -20,8 +20,8 @@ void AAction_FindPathToTarget::ExecuteAction_Implementation(FIntPoint Index)
 	}
 }
 
-void AAction_FindPathToTarget::Destroyed()
+void AAction_FindPathToTarget::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::Destroyed();
 	ExecuteAction(FIntPoint(-999, -999));
+	Super::EndPlay(EndPlayReason);
 }
